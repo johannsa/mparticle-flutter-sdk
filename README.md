@@ -15,31 +15,30 @@ See the table below to see what features are currently supported. The Flutter mP
 | eCommerce | X | X | X |  |
 | Consent |  |  |  | Coming Soon |
 
-
-# Installation
+## Installation
 
 1. Add the Flutter SDK as a dependency to your Flutter application:
 
-```
+```bash
 flutter pub add mparticle_flutter_sdk
 ```
 
 Specifying this dependency adds a line like the following to your package's `pubspec.yaml`:
 
-```
+```bash
 dependencies:
     mparticle_flutter_sdk: ^0.0.1
 ```
 
 2.  Import the package into your Dart code:
 
-```
+```bash
 import 'package:mparticle_flutter_sdk/mparticle_flutter_sdk.dart'
 ```
 
 Now that you have the mParticle Dart plugin, install mParticle on your native/web platforms.  Be sure to include an API Key and Secret where required or you will see errors in your logs when launching your app.
 
-## <a name="Android"></a>Android
+### <a name="Android"></a>Android
 
 To install mParticle on an Android platform:
 
@@ -106,7 +105,7 @@ class ExampleApplication : Application() {
 > **Warning:** Don't log events in your `Application.onCreate()`. Android may instantiate your `Application` class for a lot of reasons, in the background, while the user isn't even using their device. 
 For more help, see [the Android set up docs](https://docs.mparticle.com/developers/sdk/android/getting-started/#create-an-input).
 
-## <a name="iOS"></a>iOS
+### <a name="iOS"></a>iOS
 
 Configuring iOS:
 
@@ -130,7 +129,7 @@ The mParticle SDK is initialized by calling the `startWithOptions` method within
 For more help, see [the full iOS set up docs](https://docs.mparticle.com/developers/sdk/ios/getting-started/#create-an-input).
 
 3. Import and start the mParticle Apple SDK into Swift or Objective-C.
-### Swift Example
+#### Swift Example
 
 ```swift
 import mParticle_Apple_SDK
@@ -158,7 +157,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 }
 ```
 
-### Objective-C Example
+#### Objective-C Example
 
 For apps supporting iOS 8 and above, Apple recommends using the import syntax for **modules** or **semantic import**. However, if you prefer the traditional CocoaPods and static libraries delivery mechanism, that is fully supported as well.
 
@@ -206,11 +205,11 @@ Next, you'll need to start the SDK:
 See [Identity](https://docs.mparticle.com/developers/sdk/ios/idsync/) for more information on supplying an `MPIdentityApiRequest` object during SDK initialization.
 
 
-## <a name="Web"></a>Web
+### <a name="Web"></a>Web
 
 
 Add the mParticle snippet to your `web/index.html` file as high as possible on the page within the <head> tag, per our [Web Docs](https://docs.mparticle.com/developers/sdk/web/getting-started/).
-```
+```html
 <script type="text/javascript">
   //configure the SDK
   window.mParticle = {
@@ -240,11 +239,11 @@ Add the mParticle snippet to your `web/index.html` file as high as possible on t
 ```
 For more help, see the [full Web set up docs](https://docs.mparticle.com/developers/sdk/web/getting-started/#create-an-input).
 
-# Usage
+## Usage
 
 Each of our Dart methods is mapped to an underlying mParticle SDK at the platform level. Note that per Dart's [documentation](https://flutter.dev/docs/development/platform-integration/platform-channels#architecture, calling into platform specific code is asynchronous to ensure the user interface remains responsive.  In your code, you can swap usage between `async` and `then` in accordance to your app's requirements.
 
-## Import
+### Import
 
 **Importing** the module:
 ```dart
@@ -257,7 +256,7 @@ You must first call `getInstance` on `MparticleFlutterSdk` before each method is
 MparticleFlutterSdk? mpInstance = await MparticleFlutterSdk.getInstance();
 ```
 
-## Log Events
+### Custom Events
 
 To log events, import mParticle `EventTypes` and `MPEvent` to write proper event logging calls:
 
@@ -271,6 +270,21 @@ MPEvent event = MPEvent('Clicked Search Bar', EventType.Search)
 mpInstance?.logEvent(event);
 ```
 
+If you have a high-volume event that you would like to forward to client side kits but exclude from uploading to mParticle, set a boolean flag per event.
+
+```dart
+import 'package:mparticle_flutter_sdk/events/event_type.dart';
+import 'package:mparticle_flutter_sdk/events/mp_event.dart';
+
+MPEvent event = MPEvent('Test event logged', EventType.Navigation)
+  ..customAttributes = {'key1': 'value1'}
+  ..customFlags = {'flag1': 'flagValue1'}
+  ..shouldUploadEvent = false;
+mpInstance?.logEvent(event);
+```
+
+By default, all events upload to the mParticle server unless explicitly set not to.  This is also available on Commerce Events when calling `logCommerceEvent`.  Support for `logScreenEvent` will be coming in the future.
+
 
 To log screen events, import mParticle `ScreenEvent`:
 
@@ -283,7 +297,7 @@ ScreenEvent screenEvent = ScreenEvent('Screen event logged')
 mpInstance?.logScreenEvent(screenEvent);
 ```
 
-## Commerce Events
+### Commerce Events
 
 To log product commerce events, import `CommerceEvent`, `Product` and `ProductActionType` (optionally `TransactionAttributes`)
 
@@ -341,7 +355,7 @@ CommerceEvent commerceEvent = CommerceEvent.withImpression(impression1)
 mpInstance?.logCommerceEvent(commerceEvent);
 ```
 
-## User
+### User
 Get the current user in order to apply and remove attributes, tags, etc.
 
 ```dart
@@ -378,12 +392,12 @@ user?.getUserIdentities().then((identities) {
 ```
 
 
-## IDSync
+### IDSync
 IDSync is mParticle’s identity framework, enabling our customers to create a unified view of the customer. To read more about IDSync, see [here](https://docs.mparticle.com/guides/idsync/introduction).
 
 All IDSync calls require an `Identity Request`.
 
-### IdentityRequest
+#### IdentityRequest
 
 ```dart
 import 'package:mparticle_flutter_sdk/identity/identity_type.dart';
@@ -398,7 +412,7 @@ After an IdentityRequest is passed to one of the following IDSync methods -  `id
 
 Import the `SuccessResponse` and `FailureResponse` classes to write proper callbacks for Identity methods.  For brevity, we included an example of full error handling in only the `identify` example below, but this error handling can be used for any of the Identity calls.
 
-### Identify
+#### Identify
 The following is a full Identify example with error and success handling.
 ```dart
 import 'package:mparticle_flutter_sdk/identity/identity_api_result.dart';
@@ -458,7 +472,7 @@ mpInstance?.identity
     );
 ```
 
-### Login
+#### Login
 ```dart
 var identityRequest = MparticleFlutterSdk.identityRequest;
 identityRequest
@@ -477,7 +491,7 @@ mpInstance?.identity
     );
 ```
 
-### Modify
+#### Modify
 ```dart
 var identityRequest = MparticleFlutterSdk.identityRequest;
 identityRequest
@@ -496,7 +510,7 @@ mpInstance?.identity
     );
 ```
 
-### Logout
+#### Logout
 ```dart
 var identityRequest = MparticleFlutterSdk.identityRequest;
 // depending on your identity strategy, you may have identities added to your identityRequestk
@@ -513,7 +527,7 @@ mpInstance?.identity
     );
 ```
 
-### Aliasing Users
+#### Aliasing Users
 This is a feature to transition data from "anonymous" users to "known" users.  To learn more about user aliasing, see [here](https://docs.mparticle.com/guides/idsync/aliasing/).
 ```dart
 mpInstance?.identity.login(identityRequest: identityRequest).then(
@@ -529,7 +543,23 @@ mpInstance?.identity.login(identityRequest: identityRequest).then(
 );
 ```
 
-# Native-only Methods
+### Consent
+To learn more about Consent on mParticle, see [here](https://docs.mparticle.com/guides/consent-management/);
+
+GDPR Consent requires a user to add it do:
+```dart
+var user = await mpInstance?.getCurrentUser();
+```
+
+To Set
+
+To get a GDPR Consent State:
+
+```dart
+var gdprConsent = await user?.getGDPRConsentState();
+```
+
+### Native-only Methods
 A few methods are currently supported only on iOS/Android SDKs:
 
 * Get the SDK's opt out status -
@@ -553,13 +583,13 @@ A few methods are currently supported only on iOS/Android SDKs:
 
     The method `mpInstance.logPushRegistration()` accepts two parameters. For Android, provide both `pushToken` and `senderId`. For iOS, provide the push token in the first parameter, and simply pass `null` for the second parameter
 
-    ### Android
+    #### Android
 
     ```dart
     mpInstance?.logPushRegistration(pushToken: 'pushToken123', senderId: 'senderId123');
     ```
 
-    ### iOS
+    #### iOS
 
     ```dart
     mpInstance?.logPushRegistration(pushToken: 'pushToken123', senderId: null);
