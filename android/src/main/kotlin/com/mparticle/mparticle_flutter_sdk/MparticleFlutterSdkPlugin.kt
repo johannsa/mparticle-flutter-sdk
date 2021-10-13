@@ -44,9 +44,9 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "mparticle_flutter_sdk")
     channel.setMethodCallHandler(this)
     val context = flutterPluginBinding.applicationContext
-    (context.getSharedPreferences("FlutterTest", Context.MODE_PRIVATE) ?: return)
+    (context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE) ?: return)
       .edit()
-      .putString("AndroidTest", "true")
+      .putString("flutter.AndroidTest", "abc")
       .apply()
   }
 
