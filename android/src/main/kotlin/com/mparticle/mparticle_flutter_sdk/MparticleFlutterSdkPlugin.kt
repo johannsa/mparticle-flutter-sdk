@@ -3,6 +3,7 @@ package com.mparticle.mparticle_flutter_sdk
 import android.content.Context
 import androidx.annotation.NonNull
 import android.util.Log
+import com.mparticle.*
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -18,10 +19,6 @@ import com.mparticle.identity.IdentityHttpResponse
 import com.mparticle.identity.MParticleUser
 import com.mparticle.identity.TaskFailureListener
 import com.mparticle.identity.TaskSuccessListener
-import com.mparticle.MParticle
-import com.mparticle.MParticleOptions
-import com.mparticle.MPEvent
-import com.mparticle.UserAttributeListener
 import com.mparticle.commerce.*
 import com.mparticle.consent.CCPAConsent
 import com.mparticle.consent.ConsentState
@@ -39,18 +36,25 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel: MethodChannel
   private val TAG = "MparticleFlutterSdkPlugin"
+  var context: Context? = null
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "mparticle_flutter_sdk")
     channel.setMethodCallHandler(this)
-    val context = flutterPluginBinding.applicationContext
-    (context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE) ?: return)
-      .edit()
-      .putString("flutter.AndroidTest", "abc")
-      .apply()
+    context = flutterPluginBinding.applicationContext
+
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    MParticle.addListener(context!!, object: SdkListener() {
+      override fun onApiCalled(apiName: String, objects: MutableList<Any>, isExternal: Boolean) {
+        (context?.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE) ?: return)
+          .edit()
+          .putString("flutter.ApiName", apiName)
+          .apply()
+      }
+    })
+
     when (call.method) {
       "isInitialized" -> result.success(MParticle.getInstance() != null)
       "getAppName" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")

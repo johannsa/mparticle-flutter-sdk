@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
             ),
             buildButton('Log Event', () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
-              print(prefs.getString('AndroidTest'));
+              print(prefs.getString('ApiName'));
 
               MPEvent event = MPEvent(
                   eventName: 'Test event logged',
