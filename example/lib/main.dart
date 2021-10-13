@@ -20,6 +20,7 @@ import 'package:mparticle_flutter_sdk/identity/identity_api_error_response.dart'
 import 'package:mparticle_flutter_sdk/identity/client_error_codes.dart';
 import 'package:mparticle_flutter_sdk/apple/authorization_status.dart';
 import 'package:mparticle_flutter_sdk/consent/consent.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,7 +37,7 @@ class _MyAppState extends State<MyApp> {
   bool _isInitialized = false;
   TextButton buildButton(text, onPressedFunction) {
     return TextButton(
-        key: text,
+        // key: text,
         style: TextButton.styleFrom(
           primary: Colors.white,
           backgroundColor: Colors.green,
@@ -63,6 +64,9 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initMparticle() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('counter', '123');
+
     mpInstance = await MparticleFlutterSdk.getInstance();
     if (mpInstance != null) {
       setState(() {
@@ -115,7 +119,10 @@ class _MyAppState extends State<MyApp> {
             Center(
               child: Text('EVENT LOGGING'),
             ),
-            buildButton('Log Event', () {
+            buildButton('Log Event', () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              print(prefs.getString('counter'));
+
               MPEvent event = MPEvent(
                   eventName: 'Test event logged',
                   eventType: EventType.Navigation)

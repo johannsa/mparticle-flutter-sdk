@@ -1,5 +1,6 @@
 package com.mparticle.mparticle_flutter_sdk
 
+import android.content.Context
 import androidx.annotation.NonNull
 import android.util.Log
 
@@ -42,6 +43,12 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "mparticle_flutter_sdk")
     channel.setMethodCallHandler(this)
+    val context = flutterPluginBinding.applicationContext
+    val sharedPref = context?.getPreferences(Context.MODE_PRIVATE) ?: return
+    with (sharedPref.edit()) {
+      putInt(getString(R.string.saved_high_score_key), newHighScore)
+      apply()
+    }
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -216,6 +223,7 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
 
   private fun logEvent(call: MethodCall, result: Result) {
     try {
+
       val eventName: String? = call.argument("eventName")
       if (eventName == null) {
         return
