@@ -20,9 +20,9 @@ import com.mparticle.identity.MParticleUser
 import com.mparticle.identity.TaskFailureListener
 import com.mparticle.identity.TaskSuccessListener
 import com.mparticle.commerce.*
-import com.mparticle.consent.CCPAConsent
-import com.mparticle.consent.ConsentState
-import com.mparticle.consent.GDPRConsent
+//import com.mparticle.consent.CCPAConsent
+//import com.mparticle.consent.ConsentState
+//import com.mparticle.consent.GDPRConsent
 
 import org.json.JSONObject
 import kotlin.IllegalArgumentException
@@ -42,6 +42,11 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "mparticle_flutter_sdk")
     channel.setMethodCallHandler(this)
     context = flutterPluginBinding.applicationContext
+
+    (context?.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE) ?: return)
+    .edit()
+      .putString("flutter.Test", "test")
+      .apply()
 
   }
 
@@ -148,76 +153,76 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
           jsonObj.put(entry.key.toString(), value)
         }.let { result.success((it ?: JSONObject()).toString()) }
       "logCommerceEvent" -> this.logCommerceEvent(call, result)
-      "getGDPRConsentState" -> getUser(call, result)?.let { user ->
-        user.consentState.gdprConsentState
-          .toList()
-          .fold(JSONObject()) { json, (key, value) ->
-            json.put(key, value.toJSON())
-          }
-          .let {
-            result.success(it.toString())
-          }
-      }?: result.error(TAG, "User not found", null)
-      "addGDPRConsentState" -> getUser(call, result)?.let { user ->
-        val consentState = call.toGDPRConsent(result)
-        if (consentState == null) {
-          result.error(TAG, "ConsentState should not be null", null)
-          return
-        }
-        ConsentState.withConsentState(user.consentState)
-          .addGDPRConsentState(consentState.first, consentState.second)
-          .build()
-          .let {
-            user.setConsentState(it)
-          }
-        result.success(true)
-      }
-      "removeGDPRConsentState" -> {
-        getUser(call, result)?.let { user ->
-          val purpose = call.argument<String>("purpose")
-          if (purpose != null) {
-            ConsentState.withConsentState(user.consentState)
-              .removeGDPRConsentState(purpose)
-              .build()
-              .let { user.setConsentState(it) }
-            result.success(true)
-          } else {
-            result.error(TAG, "Missing \"purpose\" required to remove GDPRConsentState", null)
-          }
-        }
-      }
-      "getCCPAConsentState" -> getUser(call, result)?.let { user ->
-        user.consentState.ccpaConsentState
-          ?.toJSON()
-          ?.toString()
-          ?.let {
-            result.success(it)
-          }
-          ?: result.success(JSONObject().toString())
-      }
-      "addCCPAConsentState" -> getUser(call, result)?.let { user ->
-        val consentState = call.toCCPAConsent(result)
-        if (consentState == null) {
-          result.error(TAG, "ConsentState should not be null", null)
-          return
-        }
-        ConsentState.withConsentState(user.consentState)
-          .setCCPAConsentState(consentState)
-          .build()
-          .let {
-            user.setConsentState(it)
-          }
-        result.success(true)
-      }
-      "removeCCPAConsentState" -> getUser(call, result)?.let { user ->
-        ConsentState.withConsentState(user.consentState)
-          .removeCCPAConsentState()
-          .build()
-          .let {
-            user.setConsentState(it)
-          }
-        result.success(true)
-      }
+//      "getGDPRConsentState" -> getUser(call, result)?.let { user ->
+//        user.consentState.gdprConsentState
+//          .toList()
+//          .fold(JSONObject()) { json, (key, value) ->
+//            json.put(key, value.toJSON())
+//          }
+//          .let {
+//            result.success(it.toString())
+//          }
+//      }?: result.error(TAG, "User not found", null)
+//      "addGDPRConsentState" -> getUser(call, result)?.let { user ->
+//        val consentState = call.toGDPRConsent(result)
+//        if (consentState == null) {
+//          result.error(TAG, "ConsentState should not be null", null)
+//          return
+//        }
+//        ConsentState.withConsentState(user.consentState)
+//          .addGDPRConsentState(consentState.first, consentState.second)
+//          .build()
+//          .let {
+//            user.setConsentState(it)
+//          }
+//        result.success(true)
+//      }
+//      "removeGDPRConsentState" -> {
+//        getUser(call, result)?.let { user ->
+//          val purpose = call.argument<String>("purpose")
+//          if (purpose != null) {
+//            ConsentState.withConsentState(user.consentState)
+//              .removeGDPRConsentState(purpose)
+//              .build()
+//              .let { user.setConsentState(it) }
+//            result.success(true)
+//          } else {
+//            result.error(TAG, "Missing \"purpose\" required to remove GDPRConsentState", null)
+//          }
+//        }
+//      }
+//      "getCCPAConsentState" -> getUser(call, result)?.let { user ->
+//        user.consentState.ccpaConsentState
+//          ?.toJSON()
+//          ?.toString()
+//          ?.let {
+//            result.success(it)
+//          }
+//          ?: result.success(JSONObject().toString())
+//      }
+//      "addCCPAConsentState" -> getUser(call, result)?.let { user ->
+//        val consentState = call.toCCPAConsent(result)
+//        if (consentState == null) {
+//          result.error(TAG, "ConsentState should not be null", null)
+//          return
+//        }
+//        ConsentState.withConsentState(user.consentState)
+//          .setCCPAConsentState(consentState)
+//          .build()
+//          .let {
+//            user.setConsentState(it)
+//          }
+//        result.success(true)
+//      }
+//      "removeCCPAConsentState" -> getUser(call, result)?.let { user ->
+//        ConsentState.withConsentState(user.consentState)
+//          .removeCCPAConsentState()
+//          .build()
+//          .let {
+//            user.setConsentState(it)
+//          }
+//        result.success(true)
+//      }
       else -> {
         result.notImplemented()
       }
@@ -235,14 +240,14 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
       val eventTypeEnum = MParticle.EventType.values().firstOrNull { it.ordinal == eventType }
       val customAttributes: HashMap<String, String?>? = call.argument("customAttributes")
       val customFlags: HashMap<String, String>? = call.argument("customFlags")
-      val shouldUploadEvent: Boolean? = call.argument("shouldUploadEvent")
+//      val shouldUploadEvent: Boolean? = call.argument("shouldUploadEvent")
 
       val builder = if (eventTypeEnum != null) {
         MPEvent.Builder(eventName, eventTypeEnum)
       } else {
         MPEvent.Builder(eventName)
       }
-        .customAttributes(customAttributes)
+//        .customAttributes(customAttributes)
 
       if (customFlags != null) {
         for ((key, value) in customFlags) {
@@ -250,9 +255,9 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
         }
       }
 
-      if (shouldUploadEvent != null) {
-        builder.shouldUploadEvent(shouldUploadEvent)
-      }
+//      if (shouldUploadEvent != null) {
+//        builder.shouldUploadEvent(shouldUploadEvent)
+//      }
 
       val event = builder.build()
       MParticle.getInstance()?.logEvent(event)
@@ -273,7 +278,8 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
       val customAttributes: HashMap<String, String?>? = call.argument("customAttributes")
       val customFlags: HashMap<String, String>? = call.argument("customFlags")
 
-      val builder = MPEvent.Builder(eventName).customAttributes(customAttributes)
+      val builder = MPEvent.Builder(eventName)
+//      val builder = MPEvent.Builder(eventName).customAttributes(customAttributes)
 
       if (customFlags != null) {
         for ((key, value) in customFlags) {
@@ -308,7 +314,7 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
       val transactionAttributes: TransactionAttributes? =
         (map["transactionAttributes"] as Map<String, Any?>?)?.toTransactionAttributes()
       val nonInteractive = map["nonInteractive"]?.toString()?.toBoolean()
-      val shouldUploadEvent = map["shouldUploadEvent"]?.toString()?.toBoolean()
+//      val shouldUploadEvent = map["shouldUploadEvent"]?.toString()?.toBoolean()
       val productListSource = map["productListSource"]?.toString()
       val productListName = map["productListName"]?.toString()
       val currency = map["currency"]?.toString()
@@ -334,19 +340,19 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
 
           currency?.let { currency(it) }
           nonInteractive?.let { nonInteraction(it) }
-          shouldUploadEvent?.let { shouldUploadEvent(it)}
+//          shouldUploadEvent?.let { shouldUploadEvent(it)}
           productListSource?.let { productListSource(it)}
           productListName?.let { productListName(it)}
           screenName?.let { screen(it)}
           checkoutStep?.let { checkoutStep(it) }
           checkoutOptions?.let { checkoutOptions(it) }
           customAttributes?.let { customAttributes(it)}
-          customFlags?.entries?.associate { (key, value) ->
-            key to when (value) {
-              is List<*> -> value.map { it.toString() }
-              else -> listOf(value.toString())
-            }
-          }?.let { customFlags(it) }
+//          customFlags?.entries?.associate { (key, value) ->
+//            key to when (value) {
+//              is List<*> -> value.map { it.toString() }
+//              else -> listOf(value.toString())
+//            }
+//          }?.let { customFlags(it) }
         }.build()
 
       MParticle.getInstance()?.logEvent(commerceEvent).let { result.success(it != null) }
@@ -674,9 +680,9 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
 
   private fun ConvertIdentityApiResultToString(response: IdentityApiResult): String {
     val map = mutableMapOf("mpid" to response.user.id.toString())
-    response.previousUser?.let {
-      map.put("previous_mpid", it.id.toString())
-    }
+//    response.previousUser?.let {
+//      map.put("previous_mpid", it.id.toString())
+//    }
     return sanitizeMapToString(map)
   }
 
@@ -744,56 +750,56 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
     }
   }
 
-  fun CCPAConsent.toJSON() =
-    JSONObject()
-      .put("consented", isConsented)
-      .put("document", document)
-      .put("hardwareId", hardwareId)
-      .put("location", location)
-      .put("timestamp", timestamp)
-
-  fun GDPRConsent.toJSON() =
-    JSONObject()
-      .put("consented", isConsented)
-      .put("document", document)
-      .put("hardwareId", hardwareId)
-      .put("location", location)
-      .put("timestamp", timestamp)
-
-  fun MethodCall.toCCPAConsent(result: Result): CCPAConsent? {
-    return try {
-      argument<Boolean>("consented")?.let {
-        CCPAConsent.builder(it)
-          .document(argument<String>("document"))
-          .hardwareId(argument<String>("hardwareId"))
-          .location(argument<String>("location"))
-          .timestamp(argument<Long>("timestamp"))
-          .build()
-      } ?: null?.apply { result.error(TAG, "Missing \"consented\" value for arguments: ${arguments}", null) }
-    } catch (ex: Exception) {
-      result.error(TAG, ex.message, null)
-      null
-    }
-  }
-
-  fun MethodCall.toGDPRConsent(result: Result): Pair<String, GDPRConsent>? {
-    return try {
-      val purpose = argument<String>("purpose")
-      if (purpose == null) {
-        null.apply { result.error(TAG, "Missing \"purpose\" value for Consent", null)}
-      } else {
-        argument<Boolean>("consented")?.let {
-          purpose to GDPRConsent.builder(it)
-            .document(argument<String>("document"))
-            .hardwareId(argument<String>("hardwareId"))
-            .location(argument<String>("location"))
-            .timestamp(argument<Long>("timestamp"))
-            .build()
-        } ?: null.apply { result.error(TAG, "Missing \"consented\" value for Consent", null) }
-      }
-    } catch (ex: Exception) {
-      result.error(TAG, ex.message, null)
-      null
-    }
-  }
+//  fun CCPAConsent.toJSON() =
+//    JSONObject()
+//      .put("consented", isConsented)
+//      .put("document", document)
+//      .put("hardwareId", hardwareId)
+//      .put("location", location)
+//      .put("timestamp", timestamp)
+//
+//  fun GDPRConsent.toJSON() =
+//    JSONObject()
+//      .put("consented", isConsented)
+//      .put("document", document)
+//      .put("hardwareId", hardwareId)
+//      .put("location", location)
+//      .put("timestamp", timestamp)
+//
+//  fun MethodCall.toCCPAConsent(result: Result): CCPAConsent? {
+//    return try {
+//      argument<Boolean>("consented")?.let {
+//        CCPAConsent.builder(it)
+//          .document(argument<String>("document"))
+//          .hardwareId(argument<String>("hardwareId"))
+//          .location(argument<String>("location"))
+//          .timestamp(argument<Long>("timestamp"))
+//          .build()
+//      } ?: null?.apply { result.error(TAG, "Missing \"consented\" value for arguments: ${arguments}", null) }
+//    } catch (ex: Exception) {
+//      result.error(TAG, ex.message, null)
+//      null
+//    }
+//  }
+//
+//  fun MethodCall.toGDPRConsent(result: Result): Pair<String, GDPRConsent>? {
+//    return try {
+//      val purpose = argument<String>("purpose")
+//      if (purpose == null) {
+//        null.apply { result.error(TAG, "Missing \"purpose\" value for Consent", null)}
+//      } else {
+//        argument<Boolean>("consented")?.let {
+//          purpose to GDPRConsent.builder(it)
+//            .document(argument<String>("document"))
+//            .hardwareId(argument<String>("hardwareId"))
+//            .location(argument<String>("location"))
+//            .timestamp(argument<Long>("timestamp"))
+//            .build()
+//        } ?: null.apply { result.error(TAG, "Missing \"consented\" value for Consent", null) }
+//      }
+//    } catch (ex: Exception) {
+//      result.error(TAG, ex.message, null)
+//      null
+//    }
+//  }
 }

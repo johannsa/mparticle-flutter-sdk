@@ -139,7 +139,16 @@ class _MyAppState extends State<MyApp> {
                 ..shouldUploadEvent = false;
               mpInstance?.logEvent(event);
             }),
-            buildButton('Log Screen Event', () {
+            buildButton('Log Screen Event', () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              print('------');
+              print(prefs.getString('ApiName'));
+              print('------');
+              print('------');
+              print('------');
+
+
+
               ScreenEvent screenEvent =
                   ScreenEvent(eventName: 'Screen event logged')
                     ..customAttributes = {'key1': 'value1'}
