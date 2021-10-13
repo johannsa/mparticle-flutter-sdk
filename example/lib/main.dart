@@ -36,6 +36,7 @@ class _MyAppState extends State<MyApp> {
   bool _isInitialized = false;
   TextButton buildButton(text, onPressedFunction) {
     return TextButton(
+        key: text,
         style: TextButton.styleFrom(
           primary: Colors.white,
           backgroundColor: Colors.green,
