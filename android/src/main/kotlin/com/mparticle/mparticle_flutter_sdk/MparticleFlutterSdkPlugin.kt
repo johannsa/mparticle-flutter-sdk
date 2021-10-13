@@ -44,11 +44,10 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "mparticle_flutter_sdk")
     channel.setMethodCallHandler(this)
     val context = flutterPluginBinding.applicationContext
-    val sharedPref = context?.getPreferences(Context.MODE_PRIVATE) ?: return
-    with (sharedPref.edit()) {
-      putInt(getString(R.string.saved_high_score_key), newHighScore)
-      apply()
-    }
+    (context.getSharedPreferences("FlutterTest", Context.MODE_PRIVATE) ?: return)
+      .edit()
+      .putString("AndroidTest", "true")
+      .apply()
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
