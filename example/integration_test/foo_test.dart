@@ -24,7 +24,7 @@ void main() {
       print("Success Response: $successResponse");
       instance?.getCurrentUser().then((user) {
         print(user?.getMPID());
-        expect(user != null, true);
+        expect(user == null, true);
       });
     }
 

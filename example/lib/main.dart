@@ -141,8 +141,11 @@ class _MyAppState extends State<MyApp> {
             }),
             buildButton('Log Screen Event', () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.reload();
               print('------');
-              print(prefs.getString('ApiName'));
+              print(prefs.getKeys());
+              print(prefs.getString('Test'));
+              print(prefs.getString('RobWill'));
               print('------');
               print('------');
               print('------');

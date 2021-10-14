@@ -56,7 +56,7 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.mparticle:android-core:5+'
+    implementation 'com.mparticle:android-core:5.9.0'
 
     // Required for gathering Android Advertising ID (see below)
     implementation 'com.google.android.gms:play-services-ads-identifier:16.0.0'
