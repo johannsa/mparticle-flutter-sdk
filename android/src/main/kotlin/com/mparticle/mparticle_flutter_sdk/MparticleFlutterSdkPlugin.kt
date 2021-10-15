@@ -46,7 +46,7 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
     (context?.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE) ?: return)
     .edit()
       .putString("flutter.Test", "test")
-      .commit()
+      .apply()
 
   }
 
@@ -55,8 +55,8 @@ class MparticleFlutterSdkPlugin: FlutterPlugin, MethodCallHandler {
       override fun onApiCalled(apiName: String, objects: MutableList<Any>, isExternal: Boolean) {
         (context?.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE) ?: return)
           .edit()
-          .putString("flutter.test4", apiName)
-          .commit()
+          .putString("flutter.flutterTest", apiName)
+          .apply()
       }
     })
 

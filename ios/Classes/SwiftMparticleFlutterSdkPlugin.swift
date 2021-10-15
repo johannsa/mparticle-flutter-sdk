@@ -611,7 +611,7 @@ class TestListener: NSObject, MPListenerProtocol {
         let defaults = UserDefaults.standard
         switch (apiName) {
         case "logScreenEvent:":
-            defaults.set(callingAPI, forKey: "flutter.screenEvent")
+            defaults.set(apiName, forKey: "flutter.flutterTest")
         default:
             defaults.set(callingAPI, forKey: "flutter.defaulted")
         }
