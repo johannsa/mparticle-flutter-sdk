@@ -12,6 +12,7 @@ import 'package:mparticle_flutter_sdk/src/web_helpers/identity_helpers.dart'
     as webIdentityHelpers;
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// A web implementation of the MparticleFlutterSdk plugin.
 class MparticleFlutterSdkWeb {
@@ -160,6 +161,10 @@ class MparticleFlutterSdkWeb {
 
         break;
       case 'logScreenEvent':
+        print('---in web---');
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('flutterTest', call.method);
+
         mParticle.callMethod('logPageView', [
           call.arguments['eventName'],
           JsObject.jsify(call.arguments['customAttributes']),

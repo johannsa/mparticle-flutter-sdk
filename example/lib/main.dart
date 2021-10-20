@@ -20,7 +20,6 @@ import 'package:mparticle_flutter_sdk/identity/identity_api_error_response.dart'
 import 'package:mparticle_flutter_sdk/identity/client_error_codes.dart';
 import 'package:mparticle_flutter_sdk/apple/authorization_status.dart';
 import 'package:mparticle_flutter_sdk/consent/consent.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -117,9 +116,6 @@ class _MyAppState extends State<MyApp> {
               child: Text('EVENT LOGGING'),
             ),
             buildButton('Log Event', () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              print(prefs.getString('ApiName'));
-
               MPEvent event = MPEvent(
                   eventName: 'Test event logged',
                   eventType: EventType.Navigation)
